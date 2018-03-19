@@ -11,8 +11,8 @@ Doorkeeper.configure do
   end
   resource_owner_from_credentials do |routes|
     if params[:login_type] == "1"
-      @oauth = "Oauth::#{params['provider'].camelize}".constantize.new(params)  
-       if @oauth.authorized?
+      @oauth = "Oauth::#{params['provider'].camelize}".constantize.new(params) 
+      if @oauth.authorized?
         user = User.from_auth @oauth.formatted_user_data
         if user
           user
@@ -21,16 +21,6 @@ Doorkeeper.configure do
         end
       else
         raise Doorkeeper::Errors::DoorkeeperError.new( "There was an error with #{params[:provider]}. please try again." )
-      end
-    elsif params[:login_type] == "2" 
-      user = User.instagram_login params
-
-      if user && !user.confirmed?
-        raise Doorkeeper::Errors::DoorkeeperError.new(200) , "test"
-      elsif user && user.confirmed?
-        user
-      else
-        raise Doorkeeper::Errors::DoorkeeperError.new('Invalid User ID and provider')
       end
     else
       user = User.where('username=? OR email=?', params[:username], params[:email]).first
